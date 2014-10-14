@@ -1,3 +1,6 @@
+// Created by Edgar Solorio
+// October 9th, 2014
+// 
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
