@@ -1,27 +1,78 @@
-// Created by Edgar Solorio
-// October 9th, 2014
-// 
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
+#include <cstdlib>
 
 //#define DEBUG
 using namespace std;
 
-void promptUser(string&, string&);
+void promptUser(string&);
+int calculateThreshold(int&, int&, int&);
+int calculateAlpha(int,string&);
 string int2str(int);
-string reverse(string);
+string reverseString(string);
+void cls();
 int main()
 {
-    string inputString = "";
-    string searchString = "0000";    // Search for 3 zeros
+    string searchString = "";
+    int maxNum = 0;
+    int x = 0, y = 0;
+    int threshold = 0;
+    int alpha = 0;
+    bool quit = false;
 
-    int maxNum = 1024;  // 2^10 = 1024 combinations
-    maxNum--;         // 0 to 1023
-    int alpha = 0;      // Number of strings that contain
-                        // the substring "000"
-    int found = 0;      // return result from function find()
-                        // -1 = substring was not found
+    while(quit == false)
+    {
+        promptUser(searchString);
+        threshold = calculateThreshold(maxNum,x,y);
+        alpha = calculateAlpha(maxNum,searchString);
+
+        cout << "\n\nResults: " << endl;
+        cout << "---------------------------" << endl;
+        cout << "alpha = " << alpha << endl;
+        cout << "threshold = " << threshold << endl;
+
+        if(alpha > threshold)
+        {
+            cout << "alpha is GREATER then the threshold" << endl;
+            cout << x <<  "B to " << y << "B mapping is IMPOSSIBLE" << endl << endl;
+        }
+        else
+        {
+            cout << "alpha is LESS THAN OR EQUAL to the threshold" << endl;
+            cout << x <<  "B to " << y << "B mapping is POSSIBLE" << endl << endl;
+        }
+
+        char response;
+        cout << "Would you like to conduct another test run? (Y/N)" << endl;
+        cout << "Response: ";
+        cin >> response;
+        cout << "--------------------------";
+        if(response == 'y' || response == 'Y')
+            quit = false;
+        else
+            quit = true;
+
+        cls();
+    }
+
+
+    return 0;
+}
+
+void promptUser(string& searchString)
+{
+   cout << "Enter the string to avoid: ";
+   cin >> searchString;
+   cout << "string entered = " << searchString << endl;
+}
+
+int calculateAlpha(int maxNum, string& searchString)
+{
+    string inputString = "";
+    int found = 0;
+    int alpha = 0;
 
     for(int i=0 ; i <= maxNum ; i++)
     {
@@ -31,7 +82,7 @@ int main()
         if(found != string::npos)
         {
             alpha++;    // The string has "000" in it
-            cout << alpha << ": " << inputString << " contains " << searchString << endl;
+            //cout << alpha << ": " << inputString << " contains " << searchString << endl;
         }
         else
         {
@@ -39,24 +90,33 @@ int main()
         }
     }
 
-    cout << "\nResults: " << endl;
-    cout << "---------------------------" << endl;
-    cout << "alpha = " << alpha << endl;
+    #ifdef DEBUG
+        cout << "alpha = " << alpha << endl;
+    #endif // DEBUG
 
-    if(alpha > 512)
-        cout << "9B to 10B mapping is IMPOSSIBLE" << endl;
-    else
-        cout << "9B to 10B mapping is POSSIBLE" << endl;
-
-    return 0;
+    return alpha;
 }
 
-void promptUser(string& inString, string& searchString)
+int calculateThreshold(int& maxNum, int& x, int &y)
 {
-   inString = "hello";
-   searchString = "world";
+    int threshold;
 
-   cout << "instring = " << inString << "   searchString = " << searchString << endl;
+    cout << "Please input the bit mapping values for x and y " << endl;
+    cout << "Ex.) For a 9bit to 10 bit mapping; x = 9, y = 10" << endl;
+    cout << "\tx = "; cin >> x;
+    cout << "\ty = "; cin >> y;
+
+    // Alpha is calculated as such:  2^y - alpha >= 2^x    --- 1024 - alpha >= 512
+    // alpha <= 2^y - 2^x
+    // threshold = 2^y - 2^x
+    maxNum = pow(2,y) - 1;
+    threshold = pow(2,y) - pow(2,x);
+
+    #ifdef DEBUG
+        cout << "maxNum = " << maxNum << endl;
+        cout << "threshold = " << threshold << endl;
+    #endif
+    return threshold;
 }
 
 string int2str(int num)
@@ -80,15 +140,15 @@ string int2str(int num)
         iterations--;
     }
 
-    result = reverse(result);
+    result = reverseString(result);
     #ifdef DEBUG
-    cout << "int2str = " << result << endl;
+        //00cout << "int2str = " << result << endl;
     #endif
 
     return result;
 }
 
-string reverse(string s)
+string reverseString(string s)
 {
 // input string "s" is reversed and the
 // resulting string is returned to caller
@@ -97,4 +157,9 @@ string reverse(string s)
         result = s[i] + result;
 
     return result;
+}
+
+void cls()
+{
+    system("CLS");
 }
