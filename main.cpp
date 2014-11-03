@@ -3,13 +3,15 @@
 #include <stdio.h>
 #include <math.h>
 #include <cstdlib>
+#include <time.h>
 
 //#define DEBUG
   #define ULL  unsigned long long
+  #define LL   long long
 using namespace std;
 
 void promptUser(string&);
-ULL calculateThreshold(ULL&, int&, int&);
+LL calculateThreshold(ULL&, int&, int&);
 ULL calculateAlpha(ULL,string&);
 string int2str(ULL,int);
 string reverseString(string);
@@ -21,9 +23,13 @@ int main()
     string searchString = "";
     ULL maxNum = 0;
     int x = 0, y = 0;
-    ULL threshold = 0;
+    LL threshold = 0;
     ULL alpha = 0;
+    clock_t start;   // Timing variables for program execution
+    clock_t stop;
+    double elapsed_Time;
     bool quit = false;
+
 
     while(quit == false)
     {
@@ -32,13 +38,17 @@ int main()
 
         if(threshold > 0)
         {
+            start = clock();
             alpha = calculateAlpha(maxNum,searchString);
+            stop = clock();
+            elapsed_Time = static_cast<double>((static_cast<double>(stop-start) / CLOCKS_PER_SEC));
 
             cout << "\n\nResults: " << endl;
             cout << "---------------------------" << endl;
             cout << "alpha = " << alpha << endl;
             cout << "threshold = " << threshold << endl;
-            cout << "avoid string = " << searchString << endl << endl;
+            cout << "avoid string = \"" << searchString << "\"" << endl;
+            cout << "Exeuction Time = " << elapsed_Time << " seconds" << endl << endl;
 
             if(alpha > threshold)
             {
@@ -50,6 +60,7 @@ int main()
                 cout << "\t" << x <<  "B to " << y << "B mapping is POSSIBLE" << endl;
                 cout << "\tSince alpha <= threshold" << endl << endl;
             }
+            cout << "---------------------------" << endl;
         }
         else
         {
@@ -115,9 +126,9 @@ ULL calculateAlpha(ULL maxNum, string& searchString)
     return alpha;
 }
 
-ULL calculateThreshold(ULL& maxNum, int& x, int &y)
+LL calculateThreshold(ULL& maxNum, int& x, int &y)
 {
-    ULL threshold;
+    LL threshold;
 
     cout << "Please input the bit mapping values for x and y " << endl;
     cout << "Ex.) For a 9bit to 10 bit mapping; x = 9, y = 10" << endl << endl;
@@ -131,13 +142,12 @@ ULL calculateThreshold(ULL& maxNum, int& x, int &y)
     // the string to avoid. In other words, alpha represents the number of combinations
     // that cannot be used!
 
+    if( x < y)
+        return -1;  // throw back an error
+
     maxNum = pow(2,y) - 1;
     threshold = pow(2,y) - pow(2,x);
 
-    #ifdef DEBUG
-        cout << "maxNum = " << maxNum << endl;
-        cout << "threshold = " << threshold << endl;
-    #endif
     return threshold;
 }
 
