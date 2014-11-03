@@ -142,7 +142,7 @@ LL calculateThreshold(ULL& maxNum, int& x, int &y)
     // the string to avoid. In other words, alpha represents the number of combinations
     // that cannot be used!
 
-    if( x < y)
+    if( x > y)
         return -1;  // throw back an error
 
     maxNum = pow(2,y) - 1;
